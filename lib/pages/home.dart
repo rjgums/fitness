@@ -1,20 +1,52 @@
 import 'package:fitness/models/category_model.dart';
 import 'package:fitness/models/diet_model.dart';
 import 'package:fitness/models/popular_model.dart';
+import 'package:fitness/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fitness/pages/profile.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   List<CategoryModel> categories = [];
   List<DietModel> diets = [];
   List<PopularDietsModel> popularDiets = [];
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialInfo();
+  }
 
   void _getInitialInfo() {
     categories = CategoryModel.getCategories();
     diets = DietModel.getDiets();
     popularDiets = PopularDietsModel.getPopularDiets();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -26,16 +58,16 @@ class HomePage extends StatelessWidget {
       body: ListView(
         children: [
           _searchField(),
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           _categoriesSection(),
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           _dietSection(),
-          const SizedBox(height: 40),
+          SizedBox(height: 40),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   'Popular',
                   style: TextStyle(
@@ -47,6 +79,8 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 15),
               ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.only(left: 20, right: 20),
                 itemBuilder: (context, index) {
                   return Container(
                     height: 100,
@@ -77,7 +111,7 @@ class HomePage extends StatelessWidget {
                                   ' | ' +
                                   popularDiets[index].calorie,
                               style: TextStyle(
-                                color: Color(0xff786F72),
+                                color: Color(0xff7B6F72),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -114,14 +148,29 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 },
-                shrinkWrap: true,
                 separatorBuilder: (context, index) => SizedBox(height: 25),
-                padding: EdgeInsets.only(left: 20, right: 20),
                 itemCount: popularDiets.length,
               ),
             ],
           ),
           SizedBox(height: 40),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: const Color(0xff9DCEFF),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
         ],
       ),
     );
@@ -174,7 +223,7 @@ class HomePage extends StatelessWidget {
                               ' | ' +
                               diets[index].calorie,
                           style: TextStyle(
-                            color: Color(0xff786F72),
+                            color: Color(0xff7B6F72),
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
                           ),
@@ -256,7 +305,7 @@ class HomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       width: 50,
