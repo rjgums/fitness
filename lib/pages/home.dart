@@ -223,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                               ' | ' +
                               diets[index].calorie,
                           style: TextStyle(
-                            color: Color(0xff7B6F72),
+                            color: Color(0xff786F72),
                             fontSize: 13,
                             fontWeight: FontWeight.w400,
                           ),
